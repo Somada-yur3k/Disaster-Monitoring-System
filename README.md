@@ -1,150 +1,355 @@
-# Disaster Monitoring System Dashboard
+DATABASE MANAGEMENT & ADMINISTRATION 2
+PROJECT DOCUMENTATION TEMPLATE
 
-A real-time monitoring dashboard for fire detection, water level, and seismic activity using HTML, Tailwind CSS, and JavaScript with Firebase integration.
+Project Title: Disaster Alert and Monitoring System (DAMS)
+System Description: Web-Based Disaster Alert and Monitoring System
 
-## Features
+Cover Page
+Course: Database Management & Administration 2
+Project: Disaster Alert and Monitoring System (DAMS)
+System Type: Web-Based Disaster Alert and Monitoring System
+Date: February 10, 2026
 
-- 🔥 **Fire Detection Monitoring**: Real-time temperature and smoke level tracking
-- 💧 **Water Level Monitoring**: Water level and flow rate monitoring
-- 🌍 **Seismic Activity Monitoring**: Earthquake magnitude and depth detection
-- 📊 **Real-time Updates**: Live data from Arduino sensors via Firebase
-- 🚨 **Alert System**: Automatic alerts for critical conditions
-- 📈 **System Statistics**: Overview of average readings and system uptime
-- 🎨 **Modern UI**: Beautiful dark-themed interface with Tailwind CSS
+1. Introduction
+1.1 Project Overview
+The Disaster Alert and Monitoring System (DAMS) is a web-based dashboard that displays real-time environmental telemetry from connected sensors. It monitors temperature, humidity, water distance (flood risk), vibration (seismic activity), and smoke levels, and shows alerts, history, and analytics. The system uses Firebase Realtime Database for live data synchronization between sensor devices and the web interface.
 
-## Quick Start
+1.2 Objectives of the Project
+- To design and implement a normalized database
+- To apply database administration concepts
+- To integrate database operations with a web-based system
 
-### 1. Open the Dashboard
+2. Scope and Limitations
+2.1 Scope
+- User authentication and role management
+- Database CRUD operations
+- Data validation and integrity enforcement
 
-Simply open `index.html` in your web browser. The dashboard will work with mock data by default.
+2.2 Limitations
+- Limited to small-scale users
+- No real-time replication implemented
 
-### 2. Connect to Firebase
+3. System Architecture
+3.1 System Architecture Diagram (REQUIRED)
+```mermaid
+flowchart LR
+   A([Sensor Nodes\nTemperature, Humidity, Distance, Vibration, Smoke])
+   B[[Gateway MCU\nESP32 / Arduino]]
+   C[(Firebase Realtime Database)]
+   D[/Web UI\nDashboard + Telemetry/]
+   E{{Barangay Admin}}
+   F{{Residents}}
 
-1. Follow the [Firebase Setup Guide](FIREBASE_GUIDE.md) to set up your Firebase project
-2. Update `app.js` with your Firebase configuration
-3. Uncomment the Firebase code sections in `app.js`
-4. Set `useMockData = false` to use real sensor data
-
-### 3. Connect Arduino Sensors
-
-1. Follow the Arduino setup instructions in [FIREBASE_GUIDE.md](FIREBASE_GUIDE.md)
-2. Upload the provided Arduino code to your ESP32 or compatible board
-3. Connect your sensors:
-   - Temperature sensor (e.g., LM35) for fire detection
-   - Smoke sensor (MQ-2) for smoke detection
-   - Water level sensor for water monitoring
-   - Accelerometer/seismic sensor for earthquake detection
-
-## File Structure
-
+   A --> B --> C --> D
+   D --> E
+   D --> F
 ```
-Monitoring/
-├── index.html          # Main dashboard HTML file
-├── app.js             # JavaScript for Firebase and data handling
-├── FIREBASE_GUIDE.md  # Complete Firebase and Arduino setup guide
-└── README.md          # This file
+
+4. Database Requirements Analysis
+4.1 Identified Entities
+- SensorReading
+- SmokeReading
+- SensorHistory
+- StatsHistory
+- User
+- Role
+
+4.2 Data Requirements
+- Temperature, humidity, water distance, vibration magnitude, smoke level
+- Air status flags and alert thresholds
+- Timestamped history (recent readings and statistics)
+- User identity, role, and access level
+
+5. Database Design
+5.1 Entity Relationship Diagram (ERD) (REQUIRED)
+```mermaid
+erDiagram
+   USER ||--o{ USER_ROLE : has
+   ROLE ||--o{ USER_ROLE : defines
+   SENSOR_READING ||--o{ SENSOR_HISTORY : snapshots
+   SMOKE_READING ||--o{ SMOKE_HISTORY : snapshots
+   SENSOR_READING ||--o{ STATS_HISTORY : aggregates
+   SENSOR_READING ||--o{ ALERT : triggers
+   SMOKE_READING ||--o{ ALERT : triggers
+
+   USER {
+      string user_id
+      string full_name
+      string email
+      string password_hash
+      string status
+      datetime created_at
+   }
+
+   ROLE {
+      string role_id
+      string role_name
+      string description
+   }
+
+   USER_ROLE {
+      string user_id
+      string role_id
+   }
+
+   SENSOR_READING {
+      string reading_id
+      float temperature
+      float humidity
+      float distance_cm
+      float vibration
+      datetime reading_time
+   }
+
+   SENSOR_HISTORY {
+      string history_id
+      string reading_id
+      datetime captured_at
+   }
+
+   SMOKE_READING {
+      string smoke_id
+      float smoke_value
+      string air_status
+      datetime reading_time
+   }
+
+   SMOKE_HISTORY {
+      string history_id
+      string smoke_id
+      datetime captured_at
+   }
+
+   STATS_HISTORY {
+      string stats_id
+      float dist_avg
+      float dist_min
+      float dist_max
+      float vib_avg
+      float vib_min
+      float vib_max
+      datetime computed_at
+   }
+
+   ALERT {
+      string alert_id
+      string sensor_type
+      string level
+      string message
+      datetime triggered_at
+   }
 ```
 
-## Technologies Used
+What it MUST include
+- Entities for sensor readings, history, and users
+- Relationships between users and roles
+- Key attributes for telemetry values and timestamps
 
-- **HTML5**: Structure and layout
-- **Tailwind CSS**: Modern, responsive styling
-- **JavaScript**: Real-time data handling and Firebase integration
-- **Firebase Realtime Database**: Cloud database for sensor data
-- **Font Awesome**: Icons
+5.2 Database Schema Diagram (REQUIRED)
+```mermaid
+flowchart TB
+   subgraph Relational_View
+      USER[(USER)] --> USER_ROLE[(USER_ROLE)] --> ROLE[(ROLE)]
+      SENSOR_READING[(SENSOR_READING)] --> SENSOR_HISTORY[(SENSOR_HISTORY)]
+      SMOKE_READING[(SMOKE_READING)] --> SMOKE_HISTORY[(SMOKE_HISTORY)]
+      SENSOR_READING[(SENSOR_READING)] --> STATS_HISTORY[(STATS_HISTORY)]
+   end
 
-## Dashboard Sections
+   subgraph Firebase_RTD
+      RD["sensor_data\n{temperature, humidity, distance, vibration, smokeValue, airStatus, timestamp}"]
+      RH["sensor_history\n{timestamped readings}"]
+      SH["stats_history\n{computed aggregates}"]
+   end
 
-### Main Sensor Cards
-- **Fire Detection**: Shows current temperature and status
-- **Water Level**: Displays water level percentage
-- **Seismic Activity**: Shows earthquake magnitude
+   Relational_View --- Firebase_RTD
+```
 
-### Detailed Sensor Views
-- Individual sensor readings with progress bars
-- Additional metrics (smoke level, flow rate, depth)
+5.3 Normalization
+- 1NF: Each entity stores atomic values (one value per column, no repeating groups).
+- 2NF: Non-key attributes fully depend on the primary key (e.g., `reading_id` identifies the full reading).
+- 3NF: No transitive dependencies (user roles separated into `USER_ROLE` and `ROLE`).
 
-### Alert System
-- Real-time alerts for warnings and critical conditions
-- Alert history with timestamps
+6. Database Implementation
+6.1 DBMS Used
+- Firebase Realtime Database (NoSQL)
 
-### System Statistics
-- Average temperature
-- Average water level
-- Average seismic activity
-- System uptime percentage
+6.2 Sample SQL Scripts
+```sql
+CREATE TABLE sensor_reading (
+   reading_id VARCHAR(36) PRIMARY KEY,
+   temperature DECIMAL(5,2),
+   humidity DECIMAL(5,2),
+   distance_cm DECIMAL(5,2),
+   vibration DECIMAL(5,2),
+   reading_time DATETIME NOT NULL
+);
 
-## Alert Thresholds
+CREATE TABLE smoke_reading (
+   smoke_id VARCHAR(36) PRIMARY KEY,
+   smoke_value DECIMAL(6,2),
+   air_status VARCHAR(40),
+   reading_time DATETIME NOT NULL
+);
 
-### Fire Detection
-- **Normal**: Temperature < 60°C, Smoke < 50ppm
-- **Warning**: Temperature 60-80°C or Smoke 50-80ppm
-- **Critical**: Temperature > 80°C or Smoke > 80ppm
+CREATE TABLE stats_history (
+   stats_id VARCHAR(36) PRIMARY KEY,
+   dist_avg DECIMAL(6,2),
+   dist_min DECIMAL(6,2),
+   dist_max DECIMAL(6,2),
+   vib_avg DECIMAL(6,2),
+   vib_min DECIMAL(6,2),
+   vib_max DECIMAL(6,2),
+   computed_at DATETIME NOT NULL
+);
+```
 
-### Water Level
-- **Normal**: 20% - 90%
-- **Warning**: < 20% (Low) or > 90% (High)
+7. Database Administration Features
+7.1 User Roles and Privileges
+- Admin: full access, manage users, configure thresholds, view all data
+- Operator: monitor live data, acknowledge alerts, export reports
+- Viewer: read-only access to dashboard and telemetry history
 
-### Seismic Activity
-- **Normal**: Magnitude < 4.0 Mw
-- **Warning**: Magnitude 4.0 - 6.0 Mw
-- **Critical**: Magnitude > 6.0 Mw
+7.2 Backup and Recovery
+- Scheduled export of Firebase data to JSON
+- Daily backups to offline storage or cloud bucket
+- Restore procedure to re-import JSON into Firebase RTDB
 
-## Browser Compatibility
+7.3 Security Measures
+- Firebase security rules restricting read/write per role
+- HTTPS access only
+- Input validation and range checks for sensor data
 
-- Chrome (recommended)
-- Firefox
-- Edge
-- Safari
+8. Data Flow and Transactions
+8.1 Data Flow Diagram (REQUIRED)
+```mermaid
+flowchart LR
+   S[Sensor Values] --> M[MCU Firmware]
+   M --> DB[Firebase RTDB]
+   DB --> UI[Web Dashboard]
+   UI --> A[Alerts + Analytics]
+```
 
-## Development
+8.2 Database Transaction Flow Diagram (REQUIRED)
+```mermaid
+sequenceDiagram
+   participant Sensor as Sensor Node
+   participant MCU as Gateway MCU
+   participant DB as Firebase RTDB
+   participant UI as Web UI
 
-### Running Locally
+   Sensor->>MCU: Capture reading
+   MCU->>DB: Write sensor_data
+   DB-->>UI: Push update
+   UI->>UI: Render cards, alerts, charts
+   MCU->>DB: Append sensor_history
+```
 
-1. Clone or download this repository
-2. Open `index.html` in a web browser
-3. For Firebase integration, set up Firebase as described in `FIREBASE_GUIDE.md`
+9. Use Case Diagram
+9.1 Use Case Diagram (REQUIRED)
+```mermaid
+flowchart TB
+   ActorAdmin((Admin))
+   ActorOp((Operator))
+   ActorViewer((Viewer))
 
-### Testing Without Arduino
+   UC1[View Live Telemetry]
+   UC2[Review History]
+   UC3[Manage Users]
+   UC4[Configure Thresholds]
+   UC5[Acknowledge Alerts]
 
-The dashboard includes mock data generation for testing. Simply open `index.html` and the dashboard will display simulated sensor readings that update every 3 seconds.
+   ActorAdmin --> UC1
+   ActorAdmin --> UC2
+   ActorAdmin --> UC3
+   ActorAdmin --> UC4
+   ActorAdmin --> UC5
 
-## Troubleshooting
+   ActorOp --> UC1
+   ActorOp --> UC2
+   ActorOp --> UC5
 
-### Dashboard shows "--" values
-- Check if Firebase is properly configured
-- Verify `useMockData` is set to `true` for testing
-- Check browser console for errors
+   ActorViewer --> UC1
+   ActorViewer --> UC2
+```
 
-### Data not updating
-- Verify Firebase connection in browser console
-- Check Firebase database rules allow read access
-- Ensure Arduino is sending data to Firebase
+What it MUST include
+- Admin, Operator, Viewer
+- Monitoring, history review, and alert handling
 
-### Alerts not showing
-- Check sensor values exceed threshold values
-- Verify alert functions are being called
-- Check browser console for JavaScript errors
+10. Security and Access Control
+10.1 Security Diagram (REQUIRED)
+```mermaid
+flowchart LR
+   U[User] --> Auth[Auth Layer]
+   Auth --> Rules[Firebase Security Rules]
+   Rules --> DB[Firebase RTDB]
+   DB --> UI[Dashboard / Telemetry]
+```
 
-## Next Steps
+11. Testing and Validation
+11.1 Test Cases
+- Verify dashboard loads and shows default placeholders when no data exists
+- Verify live data updates when `sensor_data` changes
+- Verify alerts trigger at threshold boundaries
+- Verify history list updates with new entries
 
-1. **Set up Firebase**: Follow [FIREBASE_GUIDE.md](FIREBASE_GUIDE.md)
-2. **Connect Arduino**: Upload sensor code to your board
-3. **Customize Thresholds**: Adjust alert thresholds in `app.js`
-4. **Add Authentication**: Implement Firebase Auth for production
-5. **Deploy**: Host your dashboard on Firebase Hosting or any web server
+11.2 Data Integrity Testing
+- Range checks for sensor values (no negative distances, valid humidity range)
+- Timestamp sanity checks (monotonic and recent)
+- Reject non-numeric sensor values
 
-## License
+12. Conclusion and Recommendations
+12.1 Conclusion
+The DAMS system provides a responsive, web-based interface for monitoring critical environmental indicators. Its Firebase-backed realtime data flow supports live dashboards, history views, and alerting with minimal latency.
 
-This project is open source and available for personal and educational use.
+12.2 Recommendations
+- Add Firebase Authentication for production use
+- Implement role-based security rules
+- Add automated backups and retention policies
 
-## Support
+13. Appendices
+Appendix A – System Screenshots
+- Include screenshots of the Dashboard and Live Telemetry pages
 
-For detailed setup instructions, see [FIREBASE_GUIDE.md](FIREBASE_GUIDE.md)
+Appendix B – SQL Scripts
+- Include the SQL schema scripts shown in Section 6.2
 
----
+Appendix C – All Diagrams
+- Include all Mermaid diagrams from Sections 3, 5, 8, 9, and 10
 
-**Note**: This dashboard is designed for monitoring purposes. For critical applications, implement proper authentication, security rules, and backup systems.
+PROJECT OUTPUT INSTRUCTIONS
+1. WHAT YOU ARE BUILDING
+- A web-based disaster alert and monitoring system with realtime telemetry and alerts
+
+2. WHAT YOU WILL SUBMIT (FINAL OUTPUT)
+A. PROJECT DOCUMENTATION
+- This README with required sections and diagrams
+B. REQUIRED DIAGRAMS
+- Architecture, ERD, Schema, DFD, Transaction Flow, Use Case, Security
+C. SCREENSHOTS & SQL SCRIPTS
+- UI screenshots and sample SQL scripts in appendices
+
+3. DOCUMENT FORMAT (STRICT)
+- Follow the section order and titles shown in this document
+
+4. REQUIRED SECTIONS AND CLEAR OUTPUT INSTRUCTIONS
+4.1 Cover Page
+4.2 Introduction
+4.3 Objectives of the Project
+4.4 Scope and Limitations
+4.5 System Architecture Diagram (REQUIRED)
+4.6 Entity Relationship Diagram (ERD) (REQUIRED)
+4.7 Database Schema Diagram (REQUIRED)
+4.8 Normalization Explanation
+4.9 Database Implementation
+4.10 User Roles and Access Control
+4.11 Data Flow Diagram (DFD) (REQUIRED)
+4.12 Database Transaction Flow Diagram (REQUIRED)
+4.13 Use Case Diagram (REQUIRED)
+4.14 Security and Access Control Diagram (REQUIRED)
+4.15 Testing and Validation
+4.16 Conclusion and Recommendations
+4.17 Appendices
 
 
 

@@ -3,34 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Telemetry | Disaster Monitoring System</title>
+    <title>Live Telemetry | DAMS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
+                colors: {
+                    transparent: 'transparent',
+                    current: 'currentColor',
+                    white: '#ffffff',
+                    black: '#000000',
+                    base: '#0d1117',
+                    'base-alt': '#121826',
+                    panel: '#141b2d',
+                    card: 'rgba(20, 27, 45, 0.82)',
+                    text: '#f2f5f9',
+                    muted: '#9fb0c7',
+                    accent: '#13b6a9',
+                    'accent-2': '#f4b45f',
+                    stroke: 'rgba(255, 255, 255, 0.08)',
+                    border: 'rgba(255, 255, 255, 0.08)',
+                    cyan: {
+                        200: '#b1efe8',
+                        300: '#79dfd4',
+                        400: '#3ecbbf',
+                        500: '#13b6a9',
+                        600: '#0f8f83'
+                    },
+                    blue: {
+                        300: '#7dd6cc',
+                        400: '#46c6b8',
+                        500: '#13b6a9',
+                        600: '#0f8f83'
+                    },
+                    amber: {
+                        300: '#f7cb86',
+                        400: '#f4b45f',
+                        500: '#d99239'
+                    },
+                    orange: {
+                        300: '#f7cb86',
+                        500: '#f4b45f',
+                        600: '#c97d2d'
+                    },
+                    emerald: {
+                        300: '#7fe2d7',
+                        400: '#44cbbd',
+                        500: '#13b6a9',
+                        600: '#0f8f83'
+                    },
+                    rose: {
+                        200: '#f8c1c1',
+                        300: '#f2a0a0',
+                        400: '#e77777',
+                        500: '#d95b5b'
+                    },
+                    red: {
+                        600: '#d95b5b'
+                    }
+                },
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        display: ['"Space Grotesk"', 'sans-serif']
-                    },
-                    colors: {
-                        base: '#0a0f1a',
-                        panel: '#0f1625',
-                        card: '#141b2d',
-                        accent: '#06b6d4',
-                        accent2: '#f59e0b',
-                        border: '#1e293b',
-                        muted: '#94a3b8',
-                        text: '#f1f5f9'
+                        manrope: ['Manrope', 'sans-serif'],
+                        space: ['"Space Grotesk"', 'sans-serif']
                     },
                     boxShadow: {
-                        'panel': '0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05)',
-                        'card': '0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05)',
-                        'glow': '0 0 20px rgba(6,182,212,0.3)',
-                        'glow-amber': '0 0 20px rgba(245,158,11,0.3)'
+                        panel: '0 20px 60px rgba(8,12,20,0.55), 0 0 0 1px rgba(255,255,255,0.05)',
+                        card: '0 8px 32px rgba(8,12,20,0.5), 0 0 0 1px rgba(255,255,255,0.05)',
+                        glow: '0 0 20px rgba(19,182,169,0.3)',
+                        'glow-amber': '0 0 20px rgba(244,180,95,0.35)'
                     },
                     keyframes: {
                         'fade-in': {
@@ -89,13 +133,30 @@
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask-composite: exclude;
         }
+        .soft-outline {
+            position: relative;
+        }
+        .soft-outline::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            opacity: 1;
+            pointer-events: none;
+        }
     </style>
 </head>
-<body class="min-h-screen font-sans text-text antialiased flex flex-col lg:flex-row" style="background: linear-gradient(135deg, #0a0f1a 0%, #0f1625 50%, #0a0f1a 100%); background-attachment: fixed;">
-    <aside class="w-full lg:w-72 glass-effect border-b lg:border-b-0 lg:border-r border-border/50 shadow-panel overflow-y-auto">
-        <div class="flex items-center gap-4 px-6 pt-6 pb-8 border-b border-border/50">
+<body class="min-h-screen font-manrope text-text antialiased flex flex-col lg:flex-row bg-[radial-gradient(circle_at_top,_rgba(19,182,169,0.15),_transparent_60%),_linear-gradient(180deg,_#0b0f16_0%,_#0e1523_45%,_#0d1117_100%)] bg-fixed">
+    <aside class="w-full lg:w-72 glass-effect soft-outline border-b lg:border-b-0 lg:border-r border-stroke shadow-panel overflow-y-auto">
+        <div class="flex items-center gap-4 px-6 pt-6 pb-8 border-b border-border/30">
             <div class="relative">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-accent to-cyan-600 grid place-items-center text-lg font-bold text-white shadow-lg shadow-cyan-500/30">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent via-[#1bd4c4] to-[#0f8f83] grid place-items-center text-lg font-bold text-white shadow-lg shadow-glow">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>
@@ -103,21 +164,21 @@
                 <div class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-panel shadow-lg animate-pulse-glow"></div>
             </div>
             <div class="leading-tight flex-1">
-                <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-0.5">Disaster</p>
-                <h3 class="text-xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">Monitoring System</h3>
+                <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-0.5">DAMS</p>
+                <h3 class="text-xl font-bold tracking-tight bg-gradient-to-r from-accent to-[#6fe0d5] bg-clip-text text-transparent">Disaster Alert and Monitoring System</h3>
             </div>
         </div>
         <div class="px-4 py-6 space-y-8">
             <div>
                 <p class="text-[10px] uppercase tracking-widest text-muted/70 font-bold px-4 mb-3">Navigation</p>
                 <nav class="space-y-1">
-                    <a href="dashboard.html" class="group w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-muted border border-transparent transition-all duration-200 hover:text-cyan-300 hover:bg-accent/10 hover:border-accent/20">
+                    <a href="dashboard.html" class="group w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-muted border border-transparent transition-all duration-200 hover:text-accent hover:bg-accent/10 hover:border-accent/20">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 4v4m0 0v2m0-2v-2m9-2v2"></path>
                         </svg>
                         <span>Dashboard</span>
                     </a>
-                    <a href="telemetry.html" class="group w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-accent/20 to-cyan-500/10 border border-accent/30 text-cyan-300 shadow-lg shadow-cyan-500/10 transition-all duration-200 hover:from-accent/30 hover:to-cyan-500/20 hover:shadow-cyan-500/20">
+                    <a href="telemetry.html" class="group w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-accent/20 to-accent/10 border border-accent/30 text-accent shadow-lg shadow-glow transition-all duration-200 hover:from-accent/30 hover:to-accent/20">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
@@ -130,32 +191,32 @@
 
     <div class="flex-1 flex flex-col lg:flex-row">
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col min-w-0">
+        <div class="flex-1 flex flex-col min-w-0 lg:border-l lg:border-stroke">
             <div class="flex-1 p-6 md:p-8 lg:p-10 space-y-6 overflow-y-auto">
-                <header class="glass-effect border border-border/50 rounded-2xl p-6 md:p-8 shadow-panel flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in">
+                <header class="glass-effect soft-outline rounded-2xl p-6 md:p-8 shadow-panel flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in">
                     <div class="flex items-center gap-4">
                         <div class="relative">
-                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 via-accent to-cyan-600 grid place-items-center shadow-lg shadow-cyan-500/30">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent via-[#1bd4c4] to-[#0f8f83] grid place-items-center shadow-lg shadow-glow">
                                 <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                 </svg>
                             </div>
                         </div>
                         <div>
-                            <h1 class="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-cyan-300 via-white to-cyan-200 bg-clip-text text-transparent mb-0.5">Live Telemetry</h1>
+                            <h1 class="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-[#7fe2d7] via-white to-[#5ad5c7] bg-clip-text text-transparent mb-0.5">Live Telemetry</h1>
                             <p class="text-sm text-muted font-medium">Real-time sensor data feed and history tracking</p>
                         </div>
                     </div>
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-cyan-500/30 bg-gradient-to-r from-cyan-500/20 to-cyan-600/10 backdrop-blur-sm shadow-lg shadow-cyan-500/20">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-accent/30 bg-gradient-to-r from-accent/20 to-accent/10 backdrop-blur-sm shadow-lg shadow-glow">
                         <div class="relative">
-                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.8)] animate-pulse"></span>
-                            <span class="absolute inset-0 w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping opacity-75"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-accent shadow-[0_0_12px_rgba(19,182,169,0.8)] animate-pulse"></span>
+                            <span class="absolute inset-0 w-2.5 h-2.5 rounded-full bg-accent animate-ping opacity-75"></span>
                         </div>
-                        <span id="liveStatus" class="text-sm font-semibold text-cyan-200">Waiting for sensor data…</span>
+                        <span id="liveStatus" class="text-sm font-semibold text-[#d3f6f2]">Waiting for sensor data…</span>
                     </div>
                 </header>
 
-                <section class="glass-effect border border-border/50 rounded-2xl p-6 md:p-8 shadow-panel animate-slide-up">
+                <section class="glass-effect soft-outline rounded-2xl p-6 md:p-8 shadow-panel animate-slide-up">
                     <div class="flex items-start justify-between gap-4 mb-6">
                         <div>
                             <h2 class="text-xl md:text-2xl font-bold tracking-tight mb-1">Live Telemetry</h2>
@@ -167,7 +228,7 @@
                         </div>
                     </div>
                     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                        <article class="group relative overflow-hidden glass-effect border border-border/50 rounded-xl p-5 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02]">
+                        <article class="group relative overflow-hidden glass-effect soft-outline rounded-xl p-5 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02]">
                             <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-transparent pointer-events-none"></div>
                             <div class="relative z-10">
                                 <div class="flex items-center justify-between mb-3">
@@ -183,7 +244,7 @@
                                 <p class="text-xs text-muted/70 mt-2 font-medium" id="tempNote2">Awaiting first reading</p>
                             </div>
                         </article>
-                        <article class="group relative overflow-hidden glass-effect border border-border/50 rounded-xl p-5 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02]">
+                        <article class="group relative overflow-hidden glass-effect soft-outline rounded-xl p-5 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02]">
                             <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-transparent pointer-events-none"></div>
                             <div class="relative z-10">
                                 <div class="flex items-center justify-between mb-3">
@@ -199,7 +260,7 @@
                                 <p class="text-xs text-muted/70 mt-2 font-medium" id="humNote2">Awaiting first reading</p>
                             </div>
                         </article>
-                        <article class="group relative overflow-hidden glass-effect border border-border/50 rounded-xl p-5 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02]">
+                        <article class="group relative overflow-hidden glass-effect soft-outline rounded-xl p-5 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02]">
                             <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-transparent pointer-events-none"></div>
                             <div class="relative z-10">
                                 <div class="flex items-center justify-between mb-3">
@@ -215,7 +276,7 @@
                                 <p class="text-xs text-muted/70 mt-2 font-medium" id="distNote2">Awaiting first reading</p>
                             </div>
                         </article>
-                        <article id="vibration-card2" class="group relative overflow-hidden glass-effect border border-border/50 rounded-xl p-5 shadow-card hover:shadow-glow-amber transition-all duration-300 hover:scale-[1.02] border-l-4 border-amber-400/60">
+                        <article id="vibration-card2" class="group relative overflow-hidden glass-effect soft-outline rounded-xl p-5 shadow-card hover:shadow-glow-amber transition-all duration-300 hover:scale-[1.02]">
                             <div class="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-transparent pointer-events-none"></div>
                             <div class="relative z-10">
                                 <div class="flex items-center justify-between mb-3">
@@ -234,7 +295,7 @@
                     </div>
                 </section>
 
-                <section class="glass-effect border border-border/50 rounded-2xl p-6 md:p-8 shadow-panel animate-slide-up">
+                <section class="glass-effect soft-outline rounded-2xl p-6 md:p-8 shadow-panel animate-slide-up">
                     <div class="flex items-start justify-between gap-4 mb-6">
                         <div>
                             <h2 class="text-xl md:text-2xl font-bold tracking-tight mb-1">House Smoke Sensor</h2>
@@ -242,7 +303,7 @@
                         </div>
                     </div>
                     <div class="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-                        <article id="smoke-card2" class="group relative overflow-hidden glass-effect border border-border/50 rounded-xl p-5 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02] border-l-4 border-emerald-400/60">
+                        <article id="smoke-card2" class="group relative overflow-hidden glass-effect soft-outline rounded-xl p-5 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02]">
                             <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent pointer-events-none"></div>
                             <div class="relative z-10">
                                 <div class="flex items-center gap-3 mb-3">
@@ -274,7 +335,7 @@
                 </div>
 
                 <!-- Sensor History Report -->
-                <section class="glass-effect border border-border/50 rounded-2xl p-5 shadow-card animate-slide-up">
+                <section class="glass-effect soft-outline rounded-2xl p-5 shadow-card animate-slide-up">
                     <div class="flex items-start justify-between gap-3 mb-4">
                         <div class="flex-1">
                             <h3 class="text-lg font-bold tracking-tight mb-1">Sensor History</h3>
@@ -287,7 +348,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="overflow-hidden border border-border/50 rounded-xl glass-effect shadow-card">
+                    <div class="overflow-hidden soft-outline rounded-xl glass-effect shadow-card">
                         <div class="overflow-x-auto max-h-[400px] overflow-y-auto">
                             <table class="min-w-full text-left text-xs">
                                 <thead class="bg-gradient-to-r from-card/80 to-card/60 text-muted uppercase tracking-wider text-[10px] sticky top-0 z-10 border-b border-border/50">
@@ -311,7 +372,7 @@
                 </section>
 
                 <!-- Smoke Sensor History Report -->
-                <section class="glass-effect border border-border/50 rounded-2xl p-5 shadow-card animate-slide-up border-l-4 border-emerald-400/60">
+                <section class="glass-effect soft-outline rounded-2xl p-5 shadow-card animate-slide-up">
                     <div class="flex items-start justify-between gap-3 mb-4">
                         <div class="flex-1">
                             <h3 class="text-lg font-bold tracking-tight mb-1">Smoke Sensor History</h3>
@@ -324,7 +385,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="overflow-hidden border border-border/50 rounded-xl glass-effect shadow-card">
+                    <div class="overflow-hidden soft-outline rounded-xl glass-effect shadow-card">
                         <div class="overflow-x-auto max-h-[400px] overflow-y-auto">
                             <table class="min-w-full text-left text-xs">
                                 <thead class="bg-gradient-to-r from-emerald-500/20 to-emerald-600/10 text-muted uppercase tracking-wider text-[10px] sticky top-0 z-10 border-b border-border/50">

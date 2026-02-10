@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DAMS | Disaster Alert and Monitoring System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        base: '#0d1117',
+                        'base-alt': '#121826',
+                        panel: '#141b2d',
+                        card: 'rgba(20, 27, 45, 0.82)',
+                        text: '#f2f5f9',
+                        muted: '#9fb0c7',
+                        accent: '#13b6a9',
+                        'accent-2': '#f4b45f',
+                        stroke: 'rgba(255, 255, 255, 0.08)'
+                    },
+                    boxShadow: {
+                        glow: '0 25px 80px rgba(19, 182, 169, 0.2)',
+                        soft: '0 16px 50px rgba(8, 12, 20, 0.55)'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        shimmer: {
+                            '0%': { transform: 'translateX(-120%)' },
+                            '100%': { transform: 'translateX(220%)' }
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.06)' }
+                        }
+                    },
+                    animation: {
+                        float: 'float 8s ease-in-out infinite',
+                        'float-slow': 'float 10s ease-in-out infinite',
+                        shimmer: 'shimmer 6s linear infinite',
+                        'pulse-soft': 'pulseSoft 2.2s ease-in-out infinite'
+                    },
+                    fontFamily: {
+                        manrope: ['Manrope', 'sans-serif'],
+                        space: ['"Space Grotesk"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="min-h-screen font-manrope text-text bg-[radial-gradient(circle_at_top,_rgba(19,182,169,0.15),_transparent_60%),_linear-gradient(180deg,_#0b0f16_0%,_#0e1523_45%,_#0d1117_100%)] bg-fixed">
+    <nav class="sticky top-0 z-10 border-b border-stroke bg-[rgba(11,15,22,0.75)] backdrop-blur-[18px] shadow-[0_10px_30px_rgba(8,12,20,0.55)]">
+        <div class="mx-auto flex w-[min(1120px,90vw)] items-center justify-between py-4">
+            <div class="flex items-center gap-3 font-space font-bold tracking-[0.04em]">
+                <div class="grid h-9 w-9 place-items-center rounded-[10px] bg-gradient-to-br from-accent to-[#0f8f83] shadow-glow">
+                    <span class="text-sm font-bold">SG</span>
+                </div>
+                <div>
+                    <div>DAMS</div>
+                    <div class="text-xs text-muted">Disaster Alert and Monitoring System</div>
+                </div>
+            </div>
+            <div class="hidden items-center gap-4 text-sm text-muted md:flex">
+                <a class="rounded-full border border-transparent px-3 py-2 no-underline transition hover:border-[rgba(19,182,169,0.35)] hover:bg-[rgba(19,182,169,0.12)] hover:text-text" href="#how">How it works</a>
+                <a class="rounded-full border border-transparent px-3 py-2 no-underline transition hover:border-[rgba(19,182,169,0.35)] hover:bg-[rgba(19,182,169,0.12)] hover:text-text" href="#sensors">Sensors</a>
+                <a class="rounded-full border border-transparent px-3 py-2 no-underline transition hover:border-[rgba(19,182,169,0.35)] hover:bg-[rgba(19,182,169,0.12)] hover:text-text" href="#overview">Overview</a>
+
+            </div>
+            <button class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-accent to-[#1bd4c4] px-4 py-3 text-sm font-bold text-[#04120f] shadow-[0_12px_30px_rgba(19,182,169,0.28)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(19,182,169,0.38)]" onclick="window.open('dashboard.html', '_blank', 'noopener')">Open Dashboard</button>
+        </div>
+    </nav>
+
+    <section class="relative overflow-hidden py-24 md:py-28">
+        <div class="pointer-events-none absolute -left-16 -top-28 h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle,_rgba(19,182,169,0.4),_transparent_65%)] opacity-60 blur-[40px] animate-float-slow"></div>
+        <div class="pointer-events-none absolute -bottom-36 -right-10 h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle,_rgba(244,180,95,0.35),_transparent_65%)] opacity-60 blur-[40px] animate-float-slow [animation-delay:-4s]"></div>
+        <div class="relative z-10 mx-auto grid w-[min(1120px,90vw)] grid-cols-1 items-center gap-9 md:grid-cols-[repeat(auto-fit,_minmax(280px,_1fr))]">
+            <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out">
+                <div class="mb-4 font-space text-[clamp(32px,5vw,54px)] leading-[1.05]">Stay ahead of risk with <span class="text-accent">DAMS</span>.</div>
+                <p class="text-base leading-relaxed text-muted">A landing hub for the Disaster Alert and Monitoring System (DAMS). Track fire, water level, and seismic activity in real time, understand alert thresholds, and see how each sensor protects the field team.</p>
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <button class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-accent to-[#1bd4c4] px-4 py-3 text-sm font-bold text-[#04120f] shadow-[0_12px_30px_rgba(19,182,169,0.28)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(19,182,169,0.38)]" onclick="window.location.href='dashboard.html'">View Live Dashboard</button>
+                    <button class="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold text-text transition hover:border-white/30 hover:bg-white/10" onclick="document.querySelector('#how').scrollIntoView({ behavior: 'smooth' })">See How It Works</button>
+                </div>
+            </div>
+            <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out animate-float">
+                <div class="relative overflow-hidden rounded-3xl border border-stroke bg-card p-6 shadow-soft">
+                    <div class="pointer-events-none absolute -left-1/3 top-0 h-full w-2/3 skew-x-[-12deg] bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+                    <h3 class="mb-2 text-lg font-semibold">System snapshot</h3>
+                    <p class="text-base leading-relaxed text-muted">Live health summary built from on-site Arduino sensors and the cloud relay.</p>
+                    <div class="mt-5 grid gap-3">
+                        <div class="flex items-center justify-between rounded-2xl border border-stroke bg-[rgba(15,22,36,0.75)] px-4 py-3 transition hover:-translate-y-0.5 hover:border-[rgba(19,182,169,0.35)]">
+                            <span class="text-xs text-muted">Fire Response</span>
+                            <strong id="statFire" class="text-xl">0.0s</strong>
+                        </div>
+                        <div class="flex items-center justify-between rounded-2xl border border-stroke bg-[rgba(15,22,36,0.75)] px-4 py-3 transition hover:-translate-y-0.5 hover:border-[rgba(19,182,169,0.35)]">
+                            <span class="text-xs text-muted">Water Level Drift</span>
+                            <strong id="statWater" class="text-xl">0.0cm</strong>
+                        </div>
+                        <div class="flex items-center justify-between rounded-2xl border border-stroke bg-[rgba(15,22,36,0.75)] px-4 py-3 transition hover:-translate-y-0.5 hover:border-[rgba(19,182,169,0.35)]">
+                            <span class="text-xs text-muted">Seismic Watch</span>
+                            <strong id="statQuake" class="text-xl">0.0Mw</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how" class="py-16">
+        <div class="mx-auto w-[min(1120px,90vw)]">
+            <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out">
+                <div class="mb-3 font-space text-[clamp(24px,3vw,36px)]">How DAMS works</div>
+                <p class="max-w-[680px] text-muted">Each sensor reports to the Arduino node, data streams to the cloud, and the dashboard renders live status plus alerts. The flow below shows the full lifecycle.</p>
+            </div>
+            <div class="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out rounded-2xl border border-stroke bg-[rgba(15,22,36,0.7)] p-4 shadow-[0_12px_28px_rgba(8,12,20,0.45)]">
+                    <strong class="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-[10px] bg-[rgba(19,182,169,0.2)] text-accent">1</strong>
+                    <h4 class="font-semibold">Sense</h4>
+                    <p class="text-muted">Temperature, smoke, water, and vibration sensors capture the environment every few seconds.</p>
+                </div>
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out rounded-2xl border border-stroke bg-[rgba(15,22,36,0.7)] p-4 shadow-[0_12px_28px_rgba(8,12,20,0.45)]">
+                    <strong class="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-[10px] bg-[rgba(19,182,169,0.2)] text-accent">2</strong>
+                    <h4 class="font-semibold">Transmit</h4>
+                    <p class="text-muted">Arduino pushes readings to the cloud gateway with timestamps and device ID.</p>
+                </div>
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out rounded-2xl border border-stroke bg-[rgba(15,22,36,0.7)] p-4 shadow-[0_12px_28px_rgba(8,12,20,0.45)]">
+                    <strong class="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-[10px] bg-[rgba(19,182,169,0.2)] text-accent">3</strong>
+                    <h4 class="font-semibold">Analyze</h4>
+                    <p class="text-muted">Rules classify safe, warning, or critical states for each sensor channel.</p>
+                </div>
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out rounded-2xl border border-stroke bg-[rgba(15,22,36,0.7)] p-4 shadow-[0_12px_28px_rgba(8,12,20,0.45)]">
+                    <strong class="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-[10px] bg-[rgba(19,182,169,0.2)] text-accent">4</strong>
+                    <h4 class="font-semibold">Respond</h4>
+                    <p class="text-muted">Dashboards trigger banners, status pills, and alert guidance for responders.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="sensors" class="py-16">
+        <div class="mx-auto w-[min(1120px,90vw)]">
+            <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out">
+                <div class="mb-3 font-space text-[clamp(24px,3vw,36px)]">Sensors and Arduino parts</div>
+                <p class="max-w-[720px] text-muted">Each card explains the sensor or hardware part, its role in the system, and why it matters in the field.</p>
+            </div>
+            <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out grid gap-4 rounded-[22px] border border-stroke bg-[rgba(12,18,30,0.85)] p-5 shadow-soft transition hover:-translate-y-1.5 hover:border-[rgba(244,180,95,0.35)]">
+                    <div class="flex items-center justify-between">
+                        <div class="font-semibold">MQ-2 Smoke Sensor</div>
+                        <div class="rounded-full bg-[rgba(244,180,95,0.15)] px-2.5 py-1 text-xs font-semibold text-accent-2">Air safety</div>
+                    </div>
+                    <div class="relative grid place-items-center rounded-2xl border border-dashed border-[rgba(19,182,169,0.35)] bg-[rgba(19,182,169,0.12)] p-0">
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+                        <img src="assest/mq2-removebg-preview.png" alt="MQ-2 smoke sensor" class="relative h-28 w-40 object-contain" />
+                    </div>
+                    <div class="text-sm leading-relaxed text-muted">Detects smoke and gas concentration for fire and air hazard warnings.</div>
+                </div>
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out grid gap-4 rounded-[22px] border border-stroke bg-[rgba(12,18,30,0.85)] p-5 shadow-soft transition hover:-translate-y-1.5 hover:border-[rgba(244,180,95,0.35)]">
+                    <div class="flex items-center justify-between">
+                        <div class="font-semibold">Ultrasonic Sensor</div>
+                        <div class="rounded-full bg-[rgba(244,180,95,0.15)] px-2.5 py-1 text-xs font-semibold text-accent-2">Water level</div>
+                    </div>
+                    <div class="relative grid place-items-center rounded-2xl border border-dashed border-[rgba(19,182,169,0.35)] bg-[rgba(19,182,169,0.12)] p-0">
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+                        <img src="assest/Ultrasonic-removebg-preview.png" alt="Ultrasonic distance sensor" class="relative h-28 w-40 object-contain" />
+                    </div>
+                    <div class="text-sm leading-relaxed text-muted">Measures distance to the water surface to track rising flood levels.</div>
+                </div>
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out grid gap-4 rounded-[22px] border border-stroke bg-[rgba(12,18,30,0.85)] p-5 shadow-soft transition hover:-translate-y-1.5 hover:border-[rgba(244,180,95,0.35)]">
+                    <div class="flex items-center justify-between">
+                        <div class="font-semibold">Vibration Sensor</div>
+                        <div class="rounded-full bg-[rgba(244,180,95,0.15)] px-2.5 py-1 text-xs font-semibold text-accent-2">Seismic watch</div>
+                    </div>
+                    <div class="relative grid place-items-center rounded-2xl border border-dashed border-[rgba(19,182,169,0.35)] bg-[rgba(19,182,169,0.12)] p-0">
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+                        <img src="assest/Vibration-removebg-preview.png" alt="Vibration sensor" class="relative h-28 w-40 object-contain" />
+                    </div>
+                    <div class="text-sm leading-relaxed text-muted">Captures tremors and shocks to flag possible seismic activity.</div>
+                </div>
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out grid gap-4 rounded-[22px] border border-stroke bg-[rgba(12,18,30,0.85)] p-5 shadow-soft transition hover:-translate-y-1.5 hover:border-[rgba(244,180,95,0.35)]">
+                    <div class="flex items-center justify-between">
+                        <div class="font-semibold">Arduino R4 Board</div>
+                        <div class="rounded-full bg-[rgba(244,180,95,0.15)] px-2.5 py-1 text-xs font-semibold text-accent-2">Controller</div>
+                    </div>
+                    <div class="relative grid place-items-center rounded-2xl border border-dashed border-[rgba(19,182,169,0.35)] bg-[rgba(19,182,169,0.12)] p-0">
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+                        <img src="assest/ArduinoR4-removebg-preview.png" alt="Arduino R4 board" class="relative h-28 w-40 object-contain" />
+                    </div>
+                    <div class="text-sm leading-relaxed text-muted">Collects sensor data, formats it, and sends the readings to the system.</div>
+                </div>
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out grid gap-4 rounded-[22px] border border-stroke bg-[rgba(12,18,30,0.85)] p-5 shadow-soft transition hover:-translate-y-1.5 hover:border-[rgba(244,180,95,0.35)]">
+                    <div class="flex items-center justify-between">
+                        <div class="font-semibold">Alarm Buzzer</div>
+                        <div class="rounded-full bg-[rgba(244,180,95,0.15)] px-2.5 py-1 text-xs font-semibold text-accent-2">Alert</div>
+                    </div>
+                    <div class="relative grid place-items-center rounded-2xl border border-dashed border-[rgba(19,182,169,0.35)] bg-[rgba(19,182,169,0.12)] p-0">
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+                        <img src="assest/buzzer.png" alt="Alarm buzzer" class="relative h-28 w-40 object-contain" />
+                    </div>
+                    <div class="text-sm leading-relaxed text-muted">Provides audible alerts when thresholds are exceeded or status is critical.</div>
+                </div>
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out grid gap-4 rounded-[22px] border border-stroke bg-[rgba(12,18,30,0.85)] p-5 shadow-soft transition hover:-translate-y-1.5 hover:border-[rgba(244,180,95,0.35)]">
+                    <div class="flex items-center justify-between">
+                        <div class="font-semibold">Status LED</div>
+                        <div class="rounded-full bg-[rgba(244,180,95,0.15)] px-2.5 py-1 text-xs font-semibold text-accent-2">Signal</div>
+                    </div>
+                    <div class="relative grid place-items-center rounded-2xl border border-dashed border-[rgba(19,182,169,0.35)] bg-[rgba(19,182,169,0.12)] p-0">
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+                        <img src="assest/led-removebg-preview.png" alt="Status LED" class="relative h-28 w-40 object-contain" />
+                    </div>
+                    <div class="text-sm leading-relaxed text-muted">Gives quick visual feedback for safe, warning, and critical states.</div>
+                </div>
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out grid gap-4 rounded-[22px] border border-stroke bg-[rgba(12,18,30,0.85)] p-5 shadow-soft transition hover:-translate-y-1.5 hover:border-[rgba(244,180,95,0.35)]">
+                    <div class="flex items-center justify-between">
+                        <div class="font-semibold">Jumper Wires</div>
+                        <div class="rounded-full bg-[rgba(244,180,95,0.15)] px-2.5 py-1 text-xs font-semibold text-accent-2">Connectivity</div>
+                    </div>
+                    <div class="relative grid place-items-center rounded-2xl border border-dashed border-[rgba(19,182,169,0.35)] bg-[rgba(19,182,169,0.12)] p-0">
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+                        <img src="assest/jumperwires-removebg-preview.png" alt="Jumper wires" class="relative h-28 w-40 object-contain" />
+                    </div>
+                    <div class="text-sm leading-relaxed text-muted">Connects every module to the controller for stable signal routing.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="overview" class="py-16">
+        <div class="mx-auto w-[min(1120px,90vw)]">
+            <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out">
+                <div class="mb-3 font-space text-[clamp(24px,3vw,36px)]">System overview</div>
+                <p class="max-w-[720px] text-muted">A fast look at how the platform turns raw sensor signals into alerts, decisions, and live operator views.</p>
+            </div>
+            <div class="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out rounded-2xl border border-stroke bg-[rgba(15,22,36,0.75)] p-5 shadow-soft">
+                    <div class="mb-2 text-sm font-semibold text-accent">Live dashboard</div>
+                    <div class="text-lg font-semibold">Operational view</div>
+                    <p class="mt-2 text-sm leading-relaxed text-muted">Centralized tiles show fire, water, and vibration status with instant alert banners.</p>
+                </div>
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out rounded-2xl border border-stroke bg-[rgba(15,22,36,0.75)] p-5 shadow-soft">
+                    <div class="mb-2 text-sm font-semibold text-accent">Alert logic</div>
+                    <div class="text-lg font-semibold">Threshold engine</div>
+                    <p class="mt-2 text-sm leading-relaxed text-muted">Rules and modes interpret sensor readings, classifying safe, warning, and critical states.</p>
+                </div>
+                <div class="reveal translate-y-4 opacity-0 transition duration-700 ease-out rounded-2xl border border-stroke bg-[rgba(15,22,36,0.75)] p-5 shadow-soft">
+                    <div class="mb-2 text-sm font-semibold text-accent">Telemetry feed</div>
+                    <div class="text-lg font-semibold">Live data stream</div>
+                    <p class="mt-2 text-sm leading-relaxed text-muted">Raw readings are logged in real time for on-site responders and quick triage.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="border-t border-stroke py-10 text-sm text-muted">
+        <div class="mx-auto w-[min(1120px,90vw)]">
+            <div>DAMS is the public landing page for the Disaster Alert and Monitoring System.</div>
+            <div class="mt-1.5">Built for field monitoring, early warnings, and responder awareness.</div>
+        </div>
+    </footer>
+
+    <script>
+        const revealItems = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        revealItems.forEach((item) => observer.observe(item));
+
+        const stats = {
+            fire: { el: document.getElementById('statFire'), value: 2.4, unit: 's' },
+            water: { el: document.getElementById('statWater'), value: 14.7, unit: 'cm' },
+            quake: { el: document.getElementById('statQuake'), value: 1.6, unit: 'Mw' }
+        };
+
+        Object.values(stats).forEach((stat) => {
+            let current = 0;
+            const step = () => {
+                current += stat.value / 30;
+                if (current >= stat.value) {
+                    stat.el.textContent = stat.value.toFixed(1) + stat.unit;
+                    return;
+                }
+                stat.el.textContent = current.toFixed(1) + stat.unit;
+                requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        });
+
+        const modeMap = {
+            city: 'Balanced thresholds with regular alert cadence for dense communities.',
+            coast: 'Focus on water level and smoke changes with faster escalation for flooding risks.',
+            fault: 'Higher sensitivity for vibration spikes with extended alert hold times.'
+        };
+
+        const modeSelect = document.getElementById('mode');
+        const modeText = document.getElementById('modeText');
+
+        modeSelect.addEventListener('change', (event) => {
+            modeText.textContent = modeMap[event.target.value];
+        });
+
+        const pulseBtn = document.getElementById('pulseBtn');
+        const pulseStatus = document.getElementById('pulseStatus');
+
+        pulseBtn.addEventListener('click', () => {
+            pulseBtn.classList.add('animate-pulse-soft');
+            pulseStatus.textContent = 'Alert pulse active. Sensor cards are highlighting critical paths.';
+            setTimeout(() => {
+                pulseBtn.classList.remove('animate-pulse-soft');
+                pulseStatus.textContent = 'Pulse complete. System back to normal watch.';
+            }, 2400);
+        });
+    </script>
+</body>
+</html>

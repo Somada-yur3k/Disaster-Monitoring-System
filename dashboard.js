@@ -29,6 +29,8 @@ const SMOKE_CARD_VARIANTS = {
 let liveRef;
 let liveStatusEl;
 let lastUpdatedEl;
+let statsRef;
+let statsListenerRef;
 let vibrationAlertTimeout = null;
 let isVibrationAlertActive = false;
 let lastAlertInfo = null;
@@ -46,6 +48,10 @@ let refreshBtn = null;
 let currentAlerts = [];
 let shakeTimeout = null;
 let isShaking = false;
+let lastStatsWriteAt = 0;
+let useDbStats = false;
+const STATS_WRITE_INTERVAL_MS = 3000;
+const STATS_HISTORY_LIMIT = 50;
 
 // Chart instances
 let distanceChart = null;
@@ -340,9 +346,9 @@ function updateLiveCards(data) {
     // Check for alerts
     checkForAlerts(data);
 
-    // Track statistics for water distance
+    // Track statistics locally only until database history is active
     const distance = data.distance;
-    if (distance !== null && distance !== undefined && distance !== '') {
+    if (!useDbStats && distance !== null && distance !== undefined && distance !== '') {
         distanceHistory.push(parseFloat(distance));
         if (distanceHistory.length > MAX_HISTORY_SIZE) {
             distanceHistory.shift(); // Remove oldest entry
@@ -352,7 +358,7 @@ function updateLiveCards(data) {
     const vibValue = data.magnitude || data.vibration || 0;
     
     // Track statistics for vibration level
-    if (vibValue !== null && vibValue !== undefined && vibValue !== '') {
+    if (!useDbStats && vibValue !== null && vibValue !== undefined && vibValue !== '') {
         const vibNum = parseFloat(vibValue);
         if (!isNaN(vibNum)) {
             vibrationHistory.push(vibNum);
@@ -419,6 +425,22 @@ function updateLiveCards(data) {
         applyVibrationState('vibration-card', lastAlertInfo, vibValue, shakeActive);
     }
 
+    // Persist statistics to database on a controlled interval
+    const now = Date.now();
+    const distNum = parseFloat(distance);
+    const vibNum = parseFloat(vibValue);
+    const hasDist = !isNaN(distNum);
+    const hasVib = !isNaN(vibNum);
+
+    if (statsRef && (hasDist || hasVib) && (now - lastStatsWriteAt) >= STATS_WRITE_INTERVAL_MS) {
+        lastStatsWriteAt = now;
+        statsRef.push({
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            distance: hasDist ? distNum : null,
+            vibration: hasVib ? vibNum : null
+        });
+    }
+
     // Update statistics display
     updateStatistics();
 }
@@ -437,6 +459,7 @@ function initFirebase() {
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     liveRef = db.ref('sensor_data');
+    statsRef = db.ref('stats_history');
 
     liveRef.on('value', function(snapshot) {
         const data = snapshot.val() || {};
@@ -456,6 +479,29 @@ function initFirebase() {
         if (liveStatusEl) liveStatusEl.textContent = 'Live feed error';
         console.error('Realtime listener error', error);
     });
+
+    if (statsRef) {
+        statsListenerRef = statsRef.orderByChild('timestamp').limitToLast(STATS_HISTORY_LIMIT);
+        statsListenerRef.on('value', function(snapshot) {
+            const entries = [];
+            snapshot.forEach(child => {
+                entries.push(child.val());
+            });
+
+            entries.sort((a, b) => (a?.timestamp || 0) - (b?.timestamp || 0));
+            distanceHistory = entries
+                .map(entry => parseFloat(entry?.distance))
+                .filter(value => !isNaN(value));
+            vibrationHistory = entries
+                .map(entry => parseFloat(entry?.vibration))
+                .filter(value => !isNaN(value));
+
+            useDbStats = true;
+            updateStatistics();
+        }, function(error) {
+            console.error('Stats history listener error', error);
+        });
+    }
 }
 
 function initCharts() {
