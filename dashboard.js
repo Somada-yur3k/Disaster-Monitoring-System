@@ -44,6 +44,11 @@ let vibrationHoldStartTime = null;
 let alertBanner = null;
 let alertMessage = null;
 let closeAlertBtn = null;
+let alertToast = null;
+let alertToastMessage = null;
+let closeAlertToastBtn = null;
+let alertHistoryList = null;
+let clearAlertHistoryBtn = null;
 let refreshBtn = null;
 let currentAlerts = [];
 let shakeTimeout = null;
@@ -52,6 +57,8 @@ let lastStatsWriteAt = 0;
 let useDbStats = false;
 const STATS_WRITE_INTERVAL_MS = 3000;
 const STATS_HISTORY_LIMIT = 50;
+const ALERT_HISTORY_LIMIT = 12;
+let alertHistory = [];
 
 // Chart instances
 let distanceChart = null;
@@ -262,7 +269,7 @@ function updateStatistics() {
 }
 
 function showAlert(message, type = 'warning') {
-    if (!alertBanner || !alertMessage) return;
+    if (!alertBanner || !alertMessage || !alertToast || !alertToastMessage) return;
     
     // Check if alert already exists
     if (currentAlerts.includes(message)) return;
@@ -270,6 +277,9 @@ function showAlert(message, type = 'warning') {
     currentAlerts.push(message);
     alertMessage.textContent = message;
     alertBanner.classList.remove('hidden');
+    alertToastMessage.textContent = message;
+    alertToast.classList.remove('hidden');
+    addAlertHistory(message, type);
     
     // Auto-hide after 10 seconds
     setTimeout(() => {
@@ -278,21 +288,70 @@ function showAlert(message, type = 'warning') {
 }
 
 function hideAlert() {
-    if (!alertBanner) return;
+    if (!alertBanner || !alertToast) return;
     alertBanner.classList.add('hidden');
+    alertToast.classList.add('hidden');
     currentAlerts = [];
+}
+
+function addAlertHistory(message, type) {
+    const now = Date.now();
+    const lastEntry = alertHistory[0];
+    if (lastEntry && lastEntry.message === message && (now - lastEntry.timestamp) < 30000) {
+        return;
+    }
+
+    alertHistory.unshift({
+        message: message,
+        type: type,
+        timestamp: now
+    });
+
+    if (alertHistory.length > ALERT_HISTORY_LIMIT) {
+        alertHistory = alertHistory.slice(0, ALERT_HISTORY_LIMIT);
+    }
+
+    renderAlertHistory();
+}
+
+function renderAlertHistory() {
+    if (!alertHistoryList) return;
+
+    if (alertHistory.length === 0) {
+        alertHistoryList.innerHTML = '<div class="text-xs text-muted/80">No alerts yet.</div>';
+        return;
+    }
+
+    const items = alertHistory.map((entry) => {
+        const isCritical = entry.type === 'critical';
+        const tone = isCritical
+            ? 'border-rose-400/40 bg-rose-500/10 text-rose-100'
+            : 'border-amber-400/40 bg-amber-500/10 text-amber-100';
+        const timeLabel = formatTs(entry.timestamp);
+        return (
+            '<div class="rounded-xl border ' + tone + ' p-3">' +
+                '<div class="text-[11px] uppercase tracking-widest text-muted/80 mb-1">' + timeLabel + '</div>' +
+                '<div class="text-sm font-semibold">' + entry.message + '</div>' +
+            '</div>'
+        );
+    }).join('');
+
+    alertHistoryList.innerHTML = items;
 }
 
 function checkForAlerts(data) {
     const alerts = [];
+    const pushAlert = (message, type) => {
+        alerts.push({ message: message, type: type });
+    };
     
     // Check temperature
     if (data.temperature !== null && data.temperature !== undefined) {
         const temp = parseFloat(data.temperature);
         if (temp >= 35) {
-            alerts.push(`⚠️ Critical: Temperature is ${temp.toFixed(1)}°C - Too hot!`);
+            pushAlert(`⚠️ Critical: Temperature is ${temp.toFixed(1)}°C - Too hot!`, 'critical');
         } else if (temp <= 5) {
-            alerts.push(`⚠️ Warning: Temperature is ${temp.toFixed(1)}°C - Too cold!`);
+            pushAlert(`⚠️ Warning: Temperature is ${temp.toFixed(1)}°C - Too cold!`, 'warning');
         }
     }
     
@@ -300,9 +359,9 @@ function checkForAlerts(data) {
     if (data.distance !== null && data.distance !== undefined) {
         const dist = parseFloat(data.distance);
         if (dist <= 1) {
-            alerts.push(`🚨 DANGER: Water at ${dist.toFixed(1)}cm - EVACUATE IMMEDIATELY! Flood danger!`);
+            pushAlert(`🚨 DANGER: High water level at ${dist.toFixed(1)}cm - Evacuate immediately!`, 'critical');
         } else if (dist <= 2) {
-            alerts.push(`⚠️ WARNING: Water at ${dist.toFixed(1)}cm - Water rising, prepare to evacuate!`);
+            pushAlert(`⚠️ WARNING: High water level at ${dist.toFixed(1)}cm - Water rising, prepare to evacuate!`, 'warning');
         }
     }
     
@@ -311,9 +370,9 @@ function checkForAlerts(data) {
     if (vibValue !== null && vibValue !== undefined) {
         const mag = parseFloat(vibValue);
         if (mag >= 4.0) {
-            alerts.push(`🚨 DANGER: Strong earthquake detected (${mag.toFixed(1)}) - EVACUATE IMMEDIATELY!`);
+            pushAlert(`🚨 DANGER: Strong earthquake detected (${mag.toFixed(1)}) - Evacuate immediately!`, 'critical');
         } else if (mag >= 2.0) {
-            alerts.push(`⚠️ Warning: Minor earthquake detected (${mag.toFixed(1)}) - Seek safe location!`);
+            pushAlert(`⚠️ Warning: Minor earthquake detected (${mag.toFixed(1)}) - Seek safe location!`, 'warning');
         }
     }
     
@@ -323,13 +382,15 @@ function checkForAlerts(data) {
     if (smokeVal !== null && smokeVal !== undefined) {
         const numeric = Number(smokeVal);
         if (airStatus === 'SMOKE DETECTED' || (!isNaN(numeric) && numeric > 600)) {
-            alerts.push(`🚨 CRITICAL: Smoke detected! Air quality: ${smokeVal} - Evacuate immediately!`);
+            pushAlert(`🚨 CRITICAL: Smoke detected! Air quality: ${smokeVal} - Evacuate immediately!`, 'critical');
         }
     }
     
     // Show most critical alert
     if (alerts.length > 0) {
-        showAlert(alerts[0], 'critical');
+        const topAlert = alerts.find(alert => alert.type === 'critical') || alerts[0];
+        alerts.forEach(alert => addAlertHistory(alert.message, alert.type));
+        showAlert(topAlert.message, topAlert.type);
     } else {
         hideAlert();
     }
@@ -690,12 +751,30 @@ function initApp() {
     alertBanner = document.getElementById('alertBanner');
     alertMessage = document.getElementById('alertMessage');
     closeAlertBtn = document.getElementById('closeAlert');
+    alertToast = document.getElementById('alertToast');
+    alertToastMessage = document.getElementById('alertToastMessage');
+    closeAlertToastBtn = document.getElementById('closeAlertToast');
+    alertHistoryList = document.getElementById('alertHistoryList');
+    clearAlertHistoryBtn = document.getElementById('clearAlertHistory');
     refreshBtn = document.getElementById('refreshBtn');
     
     // Setup alert close button
     if (closeAlertBtn) {
         closeAlertBtn.addEventListener('click', hideAlert);
     }
+
+    if (closeAlertToastBtn) {
+        closeAlertToastBtn.addEventListener('click', hideAlert);
+    }
+
+    if (clearAlertHistoryBtn) {
+        clearAlertHistoryBtn.addEventListener('click', function() {
+            alertHistory = [];
+            renderAlertHistory();
+        });
+    }
+
+    renderAlertHistory();
     
     // Setup refresh button
     if (refreshBtn) {
